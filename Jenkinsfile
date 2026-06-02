@@ -1,60 +1,48 @@
 pipeline {
-    agent any
+agent any
 
-    stages {
+```
+tools {
+    maven 'Maven'
+}
 
-        stage('Clone') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/MohamedAngar/studentManager.git'
-            }
-        }
+stages {
 
-        stage('Clean') {
-            steps {
-                sh 'mvn clean'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'mvn package -DskipTests'
-            }
-        }
-
-        stage('Archive') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar'
-            }
+    stage('Clone Repository') {
+        steps {
+            git branch: 'main',
+                url: 'https://github.com/MohamedAngar/studentManager.git'
         }
     }
 
-    post {
-
-        success {
-            mail to: 'medangar2015@gmail.com',
-                 subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: """
-The build completed successfully.
-
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-
-Check Jenkins for details.
-"""
-        }
-
-        failure {
-            mail to: 'medangar2015@gmail.com',
-                 subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                 body: """
-The build failed.
-
-Job: ${env.JOB_NAME}
-Build Number: ${env.BUILD_NUMBER}
-
-Please check the Jenkins console output.
-"""
+    stage('Clean') {
+        steps {
+            sh 'mvn clean'
         }
     }
+
+    stage('Build') {
+        steps {
+            sh 'mvn package -DskipTests'
+        }
+    }
+
+    stage('Archive Artifact') {
+        steps {
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        }
+    }
+}
+
+post {
+    success {
+        echo 'Build completed successfully.'
+    }
+
+    failure {
+        echo 'Build failed.'
+    }
+}
+```
+
 }

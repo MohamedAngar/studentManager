@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 
 public class DepartmentService implements IDepartmentService {
+    private final DepartmentRepository departmentRepository;
+
     @Autowired
-    DepartmentRepository departmentRepository;
+    public DepartmentService(DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
+    }
 
     @Override
     public List<Department> getAllDepartments() {
@@ -20,7 +24,8 @@ public class DepartmentService implements IDepartmentService {
 
     @Override
     public Department getDepartmentById(Long idDepartment) {
-        return departmentRepository.findById(idDepartment).get();
+        return departmentRepository.findById(idDepartment)
+                .orElseThrow(() -> new IllegalArgumentException("Department not found with id: " + idDepartment));
     }
 
     @Override

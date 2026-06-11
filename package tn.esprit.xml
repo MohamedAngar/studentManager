@@ -1,0 +1,14 @@
+package tn.esprit.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class StudentService {
+    public String getStudentNameById(int id) {
+        if (id == 1) {
+            return "John Doe";
+        } else {
+            return "Unknown";
+        }
+    }
+}

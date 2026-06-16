@@ -1,21 +1,18 @@
 package tn.esprit.studentmanagement.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.studentmanagement.entities.Department;
+import tn.esprit.studentmanagement.exceptions.ResourceNotFoundException;
 import tn.esprit.studentmanagement.repositories.DepartmentRepository;
 
 import java.util.List;
 
 @Service
-
+@RequiredArgsConstructor
 public class DepartmentService implements IDepartmentService {
-    private final DepartmentRepository departmentRepository;
 
-    @Autowired
-    public DepartmentService(DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
-    }
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public List<Department> getAllDepartments() {
@@ -25,7 +22,7 @@ public class DepartmentService implements IDepartmentService {
     @Override
     public Department getDepartmentById(Long idDepartment) {
         return departmentRepository.findById(idDepartment)
-                .orElseThrow(() -> new IllegalArgumentException("Department not found with id: " + idDepartment));
+                .orElseThrow(() -> new ResourceNotFoundException("Department", idDepartment));
     }
 
     @Override
@@ -35,6 +32,9 @@ public class DepartmentService implements IDepartmentService {
 
     @Override
     public void deleteDepartment(Long idDepartment) {
-departmentRepository.deleteById(idDepartment);
+        if (!departmentRepository.existsById(idDepartment)) {
+            throw new ResourceNotFoundException("Department", idDepartment);
+        }
+        departmentRepository.deleteById(idDepartment);
     }
 }

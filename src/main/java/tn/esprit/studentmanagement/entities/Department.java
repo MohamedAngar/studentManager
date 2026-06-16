@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "students")
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +18,7 @@ public class Department {
     private String name;
     private String location;
     private String phone;
-    private String head; // chef de département
+    private String head;
 
     @OneToMany(mappedBy = "department")
     private List<Student> students;

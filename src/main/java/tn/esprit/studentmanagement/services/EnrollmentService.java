@@ -1,18 +1,18 @@
 package tn.esprit.studentmanagement.services;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tn.esprit.studentmanagement.repositories.EnrollmentRepository;
 import tn.esprit.studentmanagement.entities.Enrollment;
+import tn.esprit.studentmanagement.exceptions.ResourceNotFoundException;
+import tn.esprit.studentmanagement.repositories.EnrollmentRepository;
+
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class EnrollmentService implements IEnrollment {
-    private final EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    public EnrollmentService(EnrollmentRepository enrollmentRepository) {
-        this.enrollmentRepository = enrollmentRepository;
-    }
+    private final EnrollmentRepository enrollmentRepository;
 
     @Override
     public List<Enrollment> getAllEnrollments() {
@@ -22,7 +22,7 @@ public class EnrollmentService implements IEnrollment {
     @Override
     public Enrollment getEnrollmentById(Long idEnrollment) {
         return enrollmentRepository.findById(idEnrollment)
-                .orElseThrow(() -> new IllegalArgumentException("Enrollment not found with id: " + idEnrollment));
+                .orElseThrow(() -> new ResourceNotFoundException("Enrollment", idEnrollment));
     }
 
     @Override
@@ -32,6 +32,9 @@ public class EnrollmentService implements IEnrollment {
 
     @Override
     public void deleteEnrollment(Long idEnrollment) {
-enrollmentRepository.deleteById(idEnrollment);
+        if (!enrollmentRepository.existsById(idEnrollment)) {
+            throw new ResourceNotFoundException("Enrollment", idEnrollment);
+        }
+        enrollmentRepository.deleteById(idEnrollment);
     }
 }
